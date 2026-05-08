@@ -1,0 +1,152 @@
+@EagleBankAPI_HostAddress = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItYWY2ZWFjMmQzODJiNDAxOWIxN2ExMTc1NmM4ZGJiZjIiLCJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwianRpIjoiMGRmOWZlYTktYTY1MC00NmIxLWJhODItNTk3ZWIzYjdlMTE0IiwidXNlcklkIjoidXNyLWFmNmVhYzJkMzgyYjQwMTliMTdhMTE3NTZjOGRiYmYyIiwiZXhwIjoxNzc4MjU5OTAyLCJpc3MiOiJFYWdsZUJhbmtBUEkiLCJhdWQiOiJFYWdsZUJhbmtBUElVc2VycyJ9.zT2pEfM71yoZoxcmND1ltuI0Fe4oTvAy-VyRDBILyOs
+
+### Health Check
+GET {{EagleBankAPI_HostAddress}}/health
+Accept: application/json
+
+###
+
+### 1. Create User
+POST {{EagleBankAPI_HostAddress}}/v1/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "SecurePassword123!",
+  "phoneNumber": "07700900123",
+  "address": {
+    "addressLine1": "123 High Street",
+    "addressLine2": "Flat 2",
+    "addressLine3": "",
+    "town": "London",
+    "county": "Greater London",
+    "postcode": "SW1A 1AA"
+  }
+}
+
+###
+
+### 2. Login (Get JWT Token)
+# @name login
+POST {{EagleBankAPI_HostAddress}}/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePassword123!"
+}
+
+###
+
+### 3. Get User Details (Requires Auth)
+GET {{EagleBankAPI_HostAddress}}/v1/users/usr-af6eac2d382b4019b17a11756c8dbbf2
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+### 4. Update User
+PATCH {{EagleBankAPI_HostAddress}}/v1/users/usr-af6eac2d382b4019b17a11756c8dbbf2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "John Updated Doe",
+  "phoneNumber": "07700900456",
+  "address": {
+    "addressLine1": "456 New Street",
+    "addressLine2": "",
+    "addressLine3": "",
+    "town": "Manchester",
+    "county": "Greater Manchester",
+    "postcode": "M1 1AA"
+  }
+}
+
+###
+
+### 5. Create Bank Account
+POST {{EagleBankAPI_HostAddress}}/v1/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Main Savings",
+  "currency": "GBP"
+}
+
+###
+
+### 6. Get All Accounts
+GET {{EagleBankAPI_HostAddress}}/v1/accounts
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+### 7. Get Specific Account
+GET {{EagleBankAPI_HostAddress}}/v1/accounts/01432103
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+### 8. Update Account
+PATCH {{EagleBankAPI_HostAddress}}/v1/accounts/01432103
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Savings Account"
+}
+
+###
+
+### 9. Create Transaction - Deposit
+POST {{EagleBankAPI_HostAddress}}/v1/accounts/01432103/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 1000.00,
+  "currency": "GBP",
+  "type": "deposit",
+  "reference": "Initial deposit"
+}
+
+###
+
+### 10. Create Transaction - Withdrawal
+POST {{EagleBankAPI_HostAddress}}/v1/accounts/01234567/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 50.00,
+  "currency": "GBP",
+  "type": "withdrawal",
+  "reference": "ATM withdrawal"
+}
+
+###
+
+### 11. Get All Transactions for Account
+GET {{EagleBankAPI_HostAddress}}/v1/accounts/01234567/transactions
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+### 12. Delete Account
+DELETE {{EagleBankAPI_HostAddress}}/v1/accounts/01234567
+Authorization: Bearer {{token}}
+
+###
+
+### 13. Delete User
+DELETE {{EagleBankAPI_HostAddress}}/v1/users/usr-abc123
+Authorization: Bearer {{token}}
+
+###
