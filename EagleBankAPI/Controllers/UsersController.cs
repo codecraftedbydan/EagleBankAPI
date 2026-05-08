@@ -96,42 +96,23 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateUser(string userId, [FromBody] UpdateUserRequest request)
     {
-        try
-        {
-            var requestingUserId = GetUserIdFromClaims();
-            var user = await _userService.UpdateUserAsync(
-                userId, 
-                request.Name ?? string.Empty, 
-                request.Email ?? string.Empty, 
-                request.PhoneNumber ?? string.Empty,
-                request.Address?.Line1 ?? string.Empty, 
-                request.Address?.Line2, 
-                request.Address?.Line3, 
-                request.Address?.Town ?? string.Empty, 
-                request.Address?.County ?? string.Empty, 
-                request.Address?.Postcode ?? string.Empty,
-                requestingUserId
-            );
-            
-            var response = MapToUserResponse(user);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(403, new ErrorResponse { Message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new ErrorResponse { Message = ex.Message });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new ErrorResponse { Message = ex.Message });
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, new ErrorResponse { Message = "An unexpected error occurred" });
-        }
+        var requestingUserId = GetUserIdFromClaims();
+        var user = await _userService.UpdateUserAsync(
+            userId, 
+            request.Name ?? string.Empty, 
+            request.Email ?? string.Empty, 
+            request.PhoneNumber ?? string.Empty,
+            request.Address?.Line1 ?? string.Empty, 
+            request.Address?.Line2, 
+            request.Address?.Line3, 
+            request.Address?.Town ?? string.Empty, 
+            request.Address?.County ?? string.Empty, 
+            request.Address?.Postcode ?? string.Empty,
+            requestingUserId
+        );
+        
+        var response = MapToUserResponse(user);
+        return Ok(response);
     }
 
     [HttpDelete("{userId}")]
