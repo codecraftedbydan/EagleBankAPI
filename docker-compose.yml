@@ -1,0 +1,26 @@
+services:
+  eaglebankapi:
+    image: ${DOCKER_REGISTRY-}eaglebankapi
+    container_name: eaglebankapi
+    build:
+      context: .
+      dockerfile: EagleBankAPI/Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=(localdb)\\mssqllocaldb;Database=EagleBankDB;Trusted_Connection=True;
+      - UseInMemoryDatabase=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyForEagleBankAPI2026MinimumLength32Characters!
+      - JwtSettings__Issuer=EagleBankAPI
+      - JwtSettings__Audience=EagleBankAPIUsers
+      - JwtSettings__ExpiryMinutes=60
+    restart: unless-stopped
+    networks:
+      - eaglebank-network
+
+networks:
+  eaglebank-network:
+    driver: bridge
