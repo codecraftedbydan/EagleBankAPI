@@ -5,7 +5,7 @@ namespace EagleBankAPI.Models.Requests;
 public class CreateTransactionRequest
 {
     [Required]
-    public decimal Amount { get; set; }
+    public decimal? Amount { get; set; }
 
     [Required]
     public string Currency { get; set; } = "GBP";

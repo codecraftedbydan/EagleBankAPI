@@ -34,12 +34,12 @@ public class GlobalExceptionHandlerMiddleware
         var (statusCode, message) = exception switch
         {
             NotFoundException notFound => (HttpStatusCode.NotFound, notFound.Message),
+            UnauthorizedException unauthorized => (HttpStatusCode.Unauthorized, unauthorized.Message),
             ForbiddenException forbidden => (HttpStatusCode.Forbidden, forbidden.Message),
             InsufficientFundsException insufficientFunds => (HttpStatusCode.UnprocessableEntity, insufficientFunds.Message),
             DuplicateEmailException duplicate => (HttpStatusCode.Conflict, duplicate.Message),
             UserHasAccountsException userHasAccounts => (HttpStatusCode.Conflict, userHasAccounts.Message),
             InvalidTransactionException invalidTransaction => (HttpStatusCode.BadRequest, invalidTransaction.Message),
-            UnauthorizedAccessException unauthorized => (HttpStatusCode.Forbidden, unauthorized.Message),
             ArgumentException argument => (HttpStatusCode.BadRequest, argument.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };

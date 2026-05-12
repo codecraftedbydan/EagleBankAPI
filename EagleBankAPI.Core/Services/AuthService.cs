@@ -33,13 +33,13 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogWarning("Login failed - user not found: {Email}", email);
-            throw new ForbiddenException("Invalid email or password");
+            throw new UnauthorizedException("Invalid email or password");
         }
 
         if (!VerifyPassword(password, user.PasswordHash))
         {
             _logger.LogWarning("Login failed - invalid password for email: {Email}", email);
-            throw new ForbiddenException("Invalid email or password");
+            throw new UnauthorizedException("Invalid email or password");
         }
 
         var token = GenerateJwtToken(user.Id, user.Name, user.Email);
