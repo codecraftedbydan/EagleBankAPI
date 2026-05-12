@@ -1,5 +1,5 @@
 @EagleBankAPI_HostAddress = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItYWY2ZWFjMmQzODJiNDAxOWIxN2ExMTc1NmM4ZGJiZjIiLCJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwianRpIjoiMGRmOWZlYTktYTY1MC00NmIxLWJhODItNTk3ZWIzYjdlMTE0IiwidXNlcklkIjoidXNyLWFmNmVhYzJkMzgyYjQwMTliMTdhMTE3NTZjOGRiYmYyIiwiZXhwIjoxNzc4MjU5OTAyLCJpc3MiOiJFYWdsZUJhbmtBUEkiLCJhdWQiOiJFYWdsZUJhbmtBUElVc2VycyJ9.zT2pEfM71yoZoxcmND1ltuI0Fe4oTvAy-VyRDBILyOs
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItZDA4MTNlMWY3ZDZhNGQ3MDk2MDc4MTIxMGVhY2RmMGUiLCJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwianRpIjoiOTZhODIyYzktMDgzYS00ODBhLTgyNzAtOGQ1YjRiYTcxY2UzIiwidXNlcklkIjoidXNyLWQwODEzZTFmN2Q2YTRkNzA5NjA3ODEyMTBlYWNkZjBlIiwiZXhwIjoxNzc4NjIzMjc1LCJpc3MiOiJFYWdsZUJhbmtBUEkiLCJhdWQiOiJFYWdsZUJhbmtBUElVc2VycyJ9.zyPCOrY-xXN6P7jAo3h2NEHca_XHZEfNWkMI7iaUBhA
 
 ### Health Check
 GET {{EagleBankAPI_HostAddress}}/health
@@ -41,14 +41,14 @@ Content-Type: application/json
 ###
 
 ### 3. Get User Details (Requires Auth)
-GET {{EagleBankAPI_HostAddress}}/v1/users/usr-af6eac2d382b4019b17a11756c8dbbf2
+GET {{EagleBankAPI_HostAddress}}/v1/users/usr-d0813e1f7d6a4d70960781210eacdf0e
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 ### 4. Update User
-PATCH {{EagleBankAPI_HostAddress}}/v1/users/usr-af6eac2d382b4019b17a11756c8dbbf2
+PATCH {{EagleBankAPI_HostAddress}}/v1/users/usr-d0813e1f7d6a4d70960781210eacdf0e
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -73,8 +73,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "Main Savings",
-  "currency": "GBP"
+  "name": "Business Account",
+  "accountType": "business"
 }
 
 ###
@@ -87,25 +87,25 @@ Accept: application/json
 ###
 
 ### 7. Get Specific Account
-GET {{EagleBankAPI_HostAddress}}/v1/accounts/01432103
+GET {{EagleBankAPI_HostAddress}}/v1/accounts/01555167
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 ### 8. Update Account
-PATCH {{EagleBankAPI_HostAddress}}/v1/accounts/01432103
+PATCH {{EagleBankAPI_HostAddress}}/v1/accounts/01555167
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "Updated Savings Account"
+  "name": "Updated Account"
 }
 
 ###
 
 ### 9. Create Transaction - Deposit
-POST {{EagleBankAPI_HostAddress}}/v1/accounts/01432103/transactions
+POST {{EagleBankAPI_HostAddress}}/v1/accounts/01555167/transactions
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -119,7 +119,7 @@ Content-Type: application/json
 ###
 
 ### 10. Create Transaction - Withdrawal
-POST {{EagleBankAPI_HostAddress}}/v1/accounts/01234567/transactions
+POST {{EagleBankAPI_HostAddress}}/v1/accounts/01555167/transactions
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -133,20 +133,20 @@ Content-Type: application/json
 ###
 
 ### 11. Get All Transactions for Account
-GET {{EagleBankAPI_HostAddress}}/v1/accounts/01234567/transactions
+GET {{EagleBankAPI_HostAddress}}/v1/accounts/01555167/transactions
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 ### 12. Delete Account
-DELETE {{EagleBankAPI_HostAddress}}/v1/accounts/01234567
+DELETE {{EagleBankAPI_HostAddress}}/v1/accounts/01648466
 Authorization: Bearer {{token}}
 
 ###
 
 ### 13. Delete User
-DELETE {{EagleBankAPI_HostAddress}}/v1/users/usr-abc123
+DELETE {{EagleBankAPI_HostAddress}}/v1/users/usr-d0813e1f7d6a4d70960781210eacdf0e
 Authorization: Bearer {{token}}
 
 ###

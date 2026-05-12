@@ -36,9 +36,18 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
     {
         var userId = GetUserIdFromClaims();
-        var account = await _bankAccountService.CreateAccountAsync(request.Name, "GBP", userId);
+
+        var account = await _bankAccountService.CreateAccountAsync(
+            request.Name,
+            request.AccountType,
+            userId);
+
         var response = MapToAccountResponse(account);
-        return CreatedAtAction(nameof(GetAccountByNumber), new { accountNumber = response.AccountNumber }, response);
+
+        return CreatedAtAction(
+            nameof(GetAccountByNumber),
+            new { accountNumber = response.AccountNumber },
+            response);
     }
 
     [HttpGet]

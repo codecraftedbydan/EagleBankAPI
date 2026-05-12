@@ -44,6 +44,7 @@ public class TransactionServiceTests
         };
 
         var amount = 50m;
+        var currency = "GBP";
         var type = "Deposit";
         var reference = "Test deposit";
 
@@ -57,7 +58,7 @@ public class TransactionServiceTests
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _transactionService.CreateTransactionAsync(accountNumber, amount, type, reference, userId);
+        var result = await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, reference, userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -92,6 +93,7 @@ public class TransactionServiceTests
         };
 
         var amount = 30m;
+        var currency = "GBP";
         var type = "Withdrawal";
         var reference = "Test withdrawal";
 
@@ -105,7 +107,7 @@ public class TransactionServiceTests
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _transactionService.CreateTransactionAsync(accountNumber, amount, type, reference, userId);
+        var result = await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, reference, userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -126,17 +128,19 @@ public class TransactionServiceTests
         {
             AccountNumber = accountNumber,
             UserId = userId,
-            Balance = 50m
+            Balance = 50m,
+            Currency = Currency.GBP
         };
 
         var amount = 100m;
+        var currency = "GBP";
         var type = "Withdrawal";
 
         _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
             .ReturnsAsync(account);
 
         // Act
-        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, type, null, userId);
+        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, null, userId);
 
         // Assert
         await act.Should().ThrowAsync<InsufficientFundsException>()
@@ -154,17 +158,19 @@ public class TransactionServiceTests
         {
             AccountNumber = accountNumber,
             UserId = ownerId,
-            Balance = 100m
+            Balance = 100m,
+            Currency = Currency.GBP
         };
 
         var amount = 10m;
+        var currency = "GBP";
         var type = "Deposit";
 
         _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
             .ReturnsAsync(account);
 
         // Act
-        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, type, null, requestingUserId);
+        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, null, requestingUserId);
 
         // Assert
         await act.Should().ThrowAsync<ForbiddenException>()
@@ -181,21 +187,52 @@ public class TransactionServiceTests
         {
             AccountNumber = accountNumber,
             UserId = userId,
-            Balance = 100m
+            Balance = 100m,
+            Currency = Currency.GBP
         };
 
         var amount = 10m;
+        var currency = "GBP";
         var type = "Invalid"; // Invalid type value
 
         _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
             .ReturnsAsync(account);
 
         // Act
-        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, type, null, userId);
+        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, null, userId);
 
         // Assert
         await act.Should().ThrowAsync<InvalidTransactionException>()
             .WithMessage("*Invalid transaction type*");
+    }
+
+    [Fact]
+    public async Task CreateTransactionAsync_WithInvalidCurrency_ShouldThrowException()
+    {
+        // Arrange
+        var userId = "usr-123";
+        var accountNumber = "01234567";
+        var account = new BankAccount
+        {
+            AccountNumber = accountNumber,
+            UserId = userId,
+            Balance = 100m,
+            Currency = Currency.GBP
+        };
+
+        var amount = 10m;
+        var currency = "INVALID"; // Invalid currency
+        var type = "Deposit";
+
+        _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
+            .ReturnsAsync(account);
+
+        // Act
+        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, currency, type, null, userId);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidTransactionException>()
+            .WithMessage("*Invalid currency*");
     }
 
     [Fact]

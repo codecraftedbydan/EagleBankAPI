@@ -18,9 +18,9 @@ public class BankAccountService : IBankAccountService
         _logger = logger;
     }
 
-    public async Task<BankAccount> CreateAccountAsync(string name, string currency, string userId)
+    public async Task<BankAccount> CreateAccountAsync(string name, string accountType, string userId)
     {
-        _logger.LogInformation("Creating bank account for user: {UserId}, Name: {AccountName}", userId, name);
+        _logger.LogInformation("Creating bank account for user: {UserId}, Name: {AccountName}, Type: {AccountType}", userId, name, accountType);
         
         // Verify user exists
         var user = await _unitOfWork.Users.GetByIdAsync(userId);
@@ -30,12 +30,6 @@ public class BankAccountService : IBankAccountService
             throw new NotFoundException("User", userId);
         }
 
-        // Parse currency
-        if (!Enum.TryParse<Currency>(currency, true, out var currencyEnum))
-        {
-            currencyEnum = Currency.GBP;
-        }
-
         var accountNumber = await _unitOfWork.BankAccounts.GenerateAccountNumberAsync();
 
         var account = new BankAccount
@@ -43,9 +37,9 @@ public class BankAccountService : IBankAccountService
             AccountNumber = accountNumber,
             SortCode = "10-10-10",
             Name = name,
-            AccountType = "personal",
+            AccountType = accountType,
             Balance = 0.00m,
-            Currency = currencyEnum,
+            Currency = Currency.GBP,  // Always GBP per spec
             UserId = userId,
             CreatedTimestamp = DateTime.UtcNow,
             UpdatedTimestamp = DateTime.UtcNow

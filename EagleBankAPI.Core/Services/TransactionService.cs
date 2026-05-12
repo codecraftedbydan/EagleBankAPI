@@ -18,10 +18,10 @@ public class TransactionService : ITransactionService
         _logger = logger;
     }
 
-    public async Task<Transaction> CreateTransactionAsync(string accountNumber, decimal amount, string type, string? reference, string requestingUserId)
+    public async Task<Transaction> CreateTransactionAsync(string accountNumber, decimal amount, string currency, string type, string? reference, string requestingUserId)
     {
-        _logger.LogInformation("Creating {TransactionType} transaction: Amount={Amount}, Account={AccountNumber}, User={UserId}", 
-            type, amount, accountNumber, requestingUserId);
+        _logger.LogInformation("Creating {TransactionType} transaction: Amount={Amount}, Currency={Currency}, Account={AccountNumber}, User={UserId}", 
+            type, amount, currency, accountNumber, requestingUserId);
         
         var account = await _unitOfWork.BankAccounts.GetByAccountNumberAsync(accountNumber);
         if (account == null)
@@ -34,6 +34,12 @@ public class TransactionService : ITransactionService
         if (account.UserId != requestingUserId)
         {
             throw new ForbiddenException("You can only create transactions for your own bank accounts");
+        }
+
+        // Validate currency is valid
+        if (!Enum.TryParse<Currency>(currency, true, out var currencyEnum))
+        {
+            throw new InvalidTransactionException($"Invalid currency: {currency}");
         }
 
         // Parse and validate transaction type

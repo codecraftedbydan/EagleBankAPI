@@ -2,7 +2,5 @@ namespace EagleBankAPI.Core.Entities.Enums;
 
 public enum Currency
 {
-    GBP,  // British Pound
-    USD,  // US Dollar
-    EUR   // Euro
+    GBP  // British Pound
 }

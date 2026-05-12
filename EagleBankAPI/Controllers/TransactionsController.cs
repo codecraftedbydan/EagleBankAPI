@@ -39,7 +39,7 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> CreateTransaction(string accountNumber, [FromBody] CreateTransactionRequest request)
     {
         var userId = GetUserIdFromClaims();
-        var transaction = await _transactionService.CreateTransactionAsync(accountNumber, request.Amount, request.Type, request.Reference, userId);
+        var transaction = await _transactionService.CreateTransactionAsync(accountNumber, request.Amount, request.Currency, request.Type, request.Reference, userId);
         var response = MapToTransactionResponse(transaction);
         return CreatedAtAction(nameof(GetTransactionById), new { accountNumber, transactionId = response.Id }, response);
     }
