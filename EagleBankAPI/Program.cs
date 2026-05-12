@@ -18,7 +18,29 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var errors = context.ModelState
+                .Where(ms => ms.Value?.Errors.Count > 0)
+                .Select(ms => new EagleBankAPI.Models.ValidationError
+                {
+                    Field = ms.Key,
+                    Message = string.Join(", ", ms.Value!.Errors.Select(e => e.ErrorMessage)),
+                    Type = "validation_error"
+                }).ToList();
+
+            var response = new EagleBankAPI.Models.BadRequestErrorResponse
+            {
+                Message = "Invalid request data",
+                Details = errors
+            };
+
+            return new Microsoft.AspNetCore.Mvc.BadRequestObjectResult(response);
+        };
+    });
 builder.Services.AddHealthChecks();
 
 // Configure DbContext

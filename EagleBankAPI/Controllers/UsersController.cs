@@ -34,20 +34,6 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new BadRequestErrorResponse
-            {
-                Message = "Invalid request data",
-                Details = ModelState.Select(ms => new ValidationError
-                {
-                    Field = ms.Key,
-                    Message = string.Join(", ", ms.Value?.Errors.Select(e => e.ErrorMessage) ?? Array.Empty<string>()),
-                    Type = "validation_error"
-                }).ToList()
-            });
-        }
-
         var user = await _userService.CreateUserAsync(
             request.Name,
             request.Email,
