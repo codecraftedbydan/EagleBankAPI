@@ -46,6 +46,7 @@ public class TransactionsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(TransactionsListResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -63,6 +64,7 @@ public class TransactionsController : ControllerBase
 
     [HttpGet("{transactionId}")]
     [ProducesResponseType(typeof(TransactionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -88,7 +90,7 @@ public class TransactionsController : ControllerBase
             Id = transaction.Id,
             Amount = transaction.Amount,
             Currency = transaction.Currency.ToString(),
-            Type = transaction.Type.ToString(),
+            Type = transaction.Type.ToString().ToLower(),
             Reference = transaction.Reference,
             UserId = transaction.UserId,
             CreatedTimestamp = transaction.CreatedTimestamp
