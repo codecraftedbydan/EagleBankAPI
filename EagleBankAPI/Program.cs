@@ -21,6 +21,7 @@ builder.Logging.AddDebug();
 
 // Add services to the container
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 
 // Configure DbContext
 var useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
@@ -156,5 +157,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
