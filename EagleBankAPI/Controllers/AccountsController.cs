@@ -6,6 +6,7 @@ using EagleBankAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace EagleBankAPI.Controllers;
 
@@ -27,6 +28,16 @@ public class AccountsController : ControllerBase
             ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? string.Empty;
     }
+
+    private static bool IsValidAccountNumber(string accountNumber)
+        => Regex.IsMatch(accountNumber, @"^01\d{6}$");
+
+    private BadRequestObjectResult InvalidAccountNumber() =>
+        BadRequest(new BadRequestErrorResponse
+        {
+            Message = "Invalid account number format",
+            Details = [new ValidationError { Field = "accountNumber", Message = "Must match pattern ^01\\d{6}$", Type = "validation_error" }]
+        });
 
     [HttpPost]
     [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status201Created)]
@@ -75,6 +86,7 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAccountByNumber(string accountNumber)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
         var userId = GetUserIdFromClaims();
         var account = await _bankAccountService.GetAccountByNumberAsync(accountNumber, userId);
 
@@ -96,6 +108,7 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAccount(string accountNumber, [FromBody] UpdateAccountRequest request)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
         var userId = GetUserIdFromClaims();
         var account = await _bankAccountService.UpdateAccountAsync(accountNumber, request.Name, request.AccountType, userId);
         var response = MapToAccountResponse(account);
@@ -111,6 +124,7 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAccount(string accountNumber)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
         var userId = GetUserIdFromClaims();
         await _bankAccountService.DeleteAccountAsync(accountNumber, userId);
         return NoContent();

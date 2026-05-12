@@ -6,6 +6,7 @@ using EagleBankAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace EagleBankAPI.Controllers;
 
@@ -26,6 +27,16 @@ public class UsersController : ControllerBase
             ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? string.Empty;
     }
+
+    private static bool IsValidUserId(string userId)
+        => Regex.IsMatch(userId, @"^usr-[A-Za-z0-9]+$");
+
+    private BadRequestObjectResult InvalidUserId() =>
+        BadRequest(new BadRequestErrorResponse
+        {
+            Message = "Invalid user ID format",
+            Details = [new ValidationError { Field = "userId", Message = "Must match pattern ^usr-[A-Za-z0-9]+$", Type = "validation_error" }]
+        });
 
     [HttpPost]
     [AllowAnonymous]
@@ -61,6 +72,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserById(string userId)
     {
+        if (!IsValidUserId(userId)) return InvalidUserId();
         var requestingUserId = GetUserIdFromClaims();
         var user = await _userService.GetUserByIdAsync(userId, requestingUserId);
 
@@ -83,6 +95,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateUser(string userId, [FromBody] UpdateUserRequest request)
     {
+        if (!IsValidUserId(userId)) return InvalidUserId();
         var requestingUserId = GetUserIdFromClaims();
         var user = await _userService.UpdateUserAsync(
             userId,
@@ -113,6 +126,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteUser(string userId)
     {
+        if (!IsValidUserId(userId)) return InvalidUserId();
         var requestingUserId = GetUserIdFromClaims();
         await _userService.DeleteUserAsync(userId, requestingUserId);
         return NoContent();

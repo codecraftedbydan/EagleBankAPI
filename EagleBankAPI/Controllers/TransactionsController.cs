@@ -6,6 +6,7 @@ using EagleBankAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace EagleBankAPI.Controllers;
 
@@ -28,6 +29,26 @@ public class TransactionsController : ControllerBase
             ?? string.Empty;
     }
 
+    private static bool IsValidAccountNumber(string accountNumber)
+        => Regex.IsMatch(accountNumber, @"^01\d{6}$");
+
+    private static bool IsValidTransactionId(string transactionId)
+        => Regex.IsMatch(transactionId, @"^tan-[A-Za-z0-9]+$");
+
+    private BadRequestObjectResult InvalidAccountNumber() =>
+        BadRequest(new BadRequestErrorResponse
+        {
+            Message = "Invalid account number format",
+            Details = [new ValidationError { Field = "accountNumber", Message = "Must match pattern ^01\\d{6}$", Type = "validation_error" }]
+        });
+
+    private BadRequestObjectResult InvalidTransactionId() =>
+        BadRequest(new BadRequestErrorResponse
+        {
+            Message = "Invalid transaction ID format",
+            Details = [new ValidationError { Field = "transactionId", Message = "Must match pattern ^tan-[A-Za-z0-9]+$", Type = "validation_error" }]
+        });
+
     [HttpPost]
     [ProducesResponseType(typeof(TransactionResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(BadRequestErrorResponse), StatusCodes.Status400BadRequest)]
@@ -38,6 +59,7 @@ public class TransactionsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateTransaction(string accountNumber, [FromBody] CreateTransactionRequest request)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
         var userId = GetUserIdFromClaims();
         var transaction = await _transactionService.CreateTransactionAsync(accountNumber, request.Amount!.Value, request.Currency, request.Type, request.Reference, userId);
         var response = MapToTransactionResponse(transaction);
@@ -53,6 +75,7 @@ public class TransactionsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ListTransactions(string accountNumber)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
         var userId = GetUserIdFromClaims();
         var transactions = await _transactionService.GetTransactionsByAccountNumberAsync(accountNumber, userId);
         var response = new TransactionsListResponse
@@ -71,6 +94,8 @@ public class TransactionsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetTransactionById(string accountNumber, string transactionId)
     {
+        if (!IsValidAccountNumber(accountNumber)) return InvalidAccountNumber();
+        if (!IsValidTransactionId(transactionId)) return InvalidTransactionId();
         var userId = GetUserIdFromClaims();
         var transaction = await _transactionService.GetTransactionByIdAsync(accountNumber, transactionId, userId);
 

@@ -234,6 +234,72 @@ public class TransactionServiceTests
     }
 
     [Fact]
+    public async Task CreateTransactionAsync_DepositExceedingMaxBalance_ShouldThrowInvalidTransactionException()
+    {
+        // Arrange
+        var userId = "usr-123";
+        var accountNumber = "01234567";
+        var account = new BankAccount
+        {
+            AccountNumber = accountNumber,
+            UserId = userId,
+            Balance = 9500m,
+            Currency = Currency.GBP
+        };
+
+        var amount = 501m; // 9500 + 501 = 10001 > 10000
+
+        _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
+            .ReturnsAsync(account);
+
+        // Act
+        Func<Task> act = async () => await _transactionService.CreateTransactionAsync(accountNumber, amount, "GBP", "Deposit", null, userId);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidTransactionException>()
+            .WithMessage("*exceed the maximum balance*");
+    }
+
+    [Fact]
+    public async Task CreateTransactionAsync_DepositBringingBalanceToExactMaximum_ShouldSucceed()
+    {
+        // Arrange
+        var userId = "usr-123";
+        var accountNumber = "01234567";
+        var account = new BankAccount
+        {
+            AccountNumber = accountNumber,
+            UserId = userId,
+            Balance = 9000m,
+            Currency = Currency.GBP,
+            Name = "Account",
+            SortCode = "10-10-10",
+            AccountType = "personal",
+            CreatedTimestamp = DateTime.UtcNow,
+            UpdatedTimestamp = DateTime.UtcNow
+        };
+
+        var amount = 1000m; // 9000 + 1000 = 10000 exactly
+
+        _unitOfWorkMock.Setup(u => u.BankAccounts.GetByAccountNumberAsync(accountNumber))
+            .ReturnsAsync(account);
+        _unitOfWorkMock.Setup(u => u.BeginTransactionAsync())
+            .Returns(Task.CompletedTask);
+        _unitOfWorkMock.Setup(u => u.Transactions.AddAsync(It.IsAny<Transaction>()))
+            .Returns(Task.CompletedTask);
+        _unitOfWorkMock.Setup(u => u.CommitTransactionAsync())
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _transactionService.CreateTransactionAsync(accountNumber, amount, "GBP", "Deposit", null, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        account.Balance.Should().Be(10000m);
+        _unitOfWorkMock.Verify(u => u.CommitTransactionAsync(), Times.Once);
+    }
+
+    [Fact]
     public async Task GetTransactionsByAccountNumberAsync_ShouldReturnTransactions()
     {
         // Arrange

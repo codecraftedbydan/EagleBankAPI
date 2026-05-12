@@ -9,9 +9,11 @@ public class CreateTransactionRequest
     public decimal? Amount { get; set; }
 
     [Required]
+    [RegularExpression("^GBP$", ErrorMessage = "currency must be 'GBP'")]
     public string Currency { get; set; } = "GBP";
 
     [Required]
+    [RegularExpression("^(deposit|withdrawal)$", ErrorMessage = "type must be 'deposit' or 'withdrawal'")]
     public string Type { get; set; } = string.Empty;
 
     public string? Reference { get; set; }

@@ -56,6 +56,14 @@ public class TransactionService : ITransactionService
             throw new InsufficientFundsException(amount, account.Balance);
         }
 
+        // Check deposit would not exceed maximum balance
+        if (transactionType == TransactionType.Deposit && account.Balance + amount > 10000.00m)
+        {
+            _logger.LogWarning("Deposit failed - would exceed maximum balance. Requested: {RequestedAmount}, Current: {CurrentBalance}, Account: {AccountNumber}",
+                amount, account.Balance, accountNumber);
+            throw new InvalidTransactionException($"Deposit of {amount} would exceed the maximum balance of 10000.00");
+        }
+
         await _unitOfWork.BeginTransactionAsync();
 
         try

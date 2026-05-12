@@ -32,7 +32,7 @@ public class BankAccountRepository : Repository<BankAccount>, IBankAccountReposi
 
         do
         {
-            var randomPart = random.Next(100000, 999999); // 6 digits
+            var randomPart = random.Next(100000, 1000000); // 6 digits
             accountNumber = $"01{randomPart}";
         }
         while (await _dbSet.AnyAsync(a => a.AccountNumber == accountNumber));
