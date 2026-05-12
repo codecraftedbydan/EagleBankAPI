@@ -86,15 +86,15 @@ public class UsersController : ControllerBase
         var requestingUserId = GetUserIdFromClaims();
         var user = await _userService.UpdateUserAsync(
             userId,
-            request.Name ?? string.Empty,
-            request.Email ?? string.Empty,
-            request.PhoneNumber ?? string.Empty,
-            request.Address?.Line1 ?? string.Empty,
+            request.Name,
+            request.Email,
+            request.PhoneNumber,
+            request.Address?.Line1,
             request.Address?.Line2,
             request.Address?.Line3,
-            request.Address?.Town ?? string.Empty,
-            request.Address?.County ?? string.Empty,
-            request.Address?.Postcode ?? string.Empty,
+            request.Address?.Town,
+            request.Address?.County,
+            request.Address?.Postcode,
             requestingUserId
         );
 

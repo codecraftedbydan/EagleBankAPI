@@ -97,7 +97,7 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> UpdateAccount(string accountNumber, [FromBody] UpdateAccountRequest request)
     {
         var userId = GetUserIdFromClaims();
-        var account = await _bankAccountService.UpdateAccountAsync(accountNumber, request.Name ?? string.Empty, userId);
+        var account = await _bankAccountService.UpdateAccountAsync(accountNumber, request.Name, request.AccountType, userId);
         var response = MapToAccountResponse(account);
         return Ok(response);
     }

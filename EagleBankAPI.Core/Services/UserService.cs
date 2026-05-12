@@ -69,8 +69,8 @@ public class UserService : IUserService
         return await _unitOfWork.Users.GetByIdAsync(userId);
     }
 
-    public async Task<User> UpdateUserAsync(string userId, string name, string email, string phoneNumber,
-        string addressLine1, string? addressLine2, string? addressLine3, string town, string county, string postcode, string requestingUserId)
+    public async Task<User> UpdateUserAsync(string userId, string? name, string? email, string? phoneNumber,
+        string? addressLine1, string? addressLine2, string? addressLine3, string? town, string? county, string? postcode, string requestingUserId)
     {
         // Users can only update their own details
         if (userId != requestingUserId)
@@ -84,22 +84,28 @@ public class UserService : IUserService
             throw new NotFoundException("User", userId);
         }
 
-        // Update fields
-        user.Name = name;
+        if (name != null) user.Name = name;
 
-        if (email != user.Email && await _unitOfWork.Users.EmailExistsAsync(email))
+        if (email != null)
         {
-            throw new DuplicateEmailException(email);
+            if (email != user.Email && await _unitOfWork.Users.EmailExistsAsync(email))
+            {
+                throw new DuplicateEmailException(email);
+            }
+            user.Email = email;
         }
-        user.Email = email;
 
-        user.PhoneNumber = phoneNumber;
-        user.AddressLine1 = addressLine1;
-        user.AddressLine2 = addressLine2;
-        user.AddressLine3 = addressLine3;
-        user.AddressTown = town;
-        user.AddressCounty = county;
-        user.AddressPostcode = postcode;
+        if (phoneNumber != null) user.PhoneNumber = phoneNumber;
+
+        if (addressLine1 != null)
+        {
+            user.AddressLine1 = addressLine1;
+            user.AddressLine2 = addressLine2;
+            user.AddressLine3 = addressLine3;
+            user.AddressTown = town!;
+            user.AddressCounty = county!;
+            user.AddressPostcode = postcode!;
+        }
         user.UpdatedTimestamp = DateTime.UtcNow;
 
         _unitOfWork.Users.Update(user);

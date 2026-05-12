@@ -8,5 +8,6 @@ public class CreateAccountRequest
     public string Name { get; set; } = string.Empty;
 
     [Required]
+    [RegularExpression("^personal$", ErrorMessage = "accountType must be 'personal'")]
     public string AccountType { get; set; } = "personal";
 }

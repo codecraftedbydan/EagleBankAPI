@@ -75,7 +75,7 @@ public class AuthServiceTests
         Func<Task> act = async () => await _authService.LoginAsync(email, password);
 
         // Assert
-        await act.Should().ThrowAsync<ForbiddenException>()
+        await act.Should().ThrowAsync<UnauthorizedException>()
             .WithMessage("Invalid email or password");
     }
 
@@ -102,7 +102,7 @@ public class AuthServiceTests
         Func<Task> act = async () => await _authService.LoginAsync(email, wrongPassword);
 
         // Assert
-        await act.Should().ThrowAsync<ForbiddenException>()
+        await act.Should().ThrowAsync<UnauthorizedException>()
             .WithMessage("Invalid email or password");
     }
 

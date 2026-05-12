@@ -29,7 +29,7 @@ public class BankAccountServiceTests
         var userId = "usr-123";
         var user = new User { Id = userId };
         var accountName = "Savings Account";
-        var currency = "GBP";
+        var accountType = "personal";
 
         _unitOfWorkMock.Setup(u => u.Users.GetByIdAsync(userId))
             .ReturnsAsync(user);
@@ -41,7 +41,7 @@ public class BankAccountServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _bankAccountService.CreateAccountAsync(accountName, currency, userId);
+        var result = await _bankAccountService.CreateAccountAsync(accountName, accountType, userId);
 
         // Assert
         result.Should().NotBeNull();
@@ -50,6 +50,7 @@ public class BankAccountServiceTests
         result.SortCode.Should().Be("10-10-10");
         result.Balance.Should().Be(0.00m);
         result.Currency.Should().Be(Currency.GBP);
+        result.AccountType.Should().Be(accountType);
 
         _unitOfWorkMock.Verify(u => u.BankAccounts.AddAsync(It.IsAny<BankAccount>()), Times.Once);
         _unitOfWorkMock.Verify(u => u.CompleteAsync(), Times.Once);
@@ -66,7 +67,7 @@ public class BankAccountServiceTests
             .ReturnsAsync((User?)null);
 
         // Act
-        Func<Task> act = async () => await _bankAccountService.CreateAccountAsync(accountName, "GBP", userId);
+        Func<Task> act = async () => await _bankAccountService.CreateAccountAsync(accountName, "personal", userId);
 
         // Assert
         await act.Should().ThrowAsync<NotFoundException>()
@@ -202,7 +203,7 @@ public class BankAccountServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _bankAccountService.UpdateAccountAsync(accountNumber, newName, userId);
+        var result = await _bankAccountService.UpdateAccountAsync(accountNumber, newName, null, userId);
 
         // Assert
         result.Should().NotBeNull();

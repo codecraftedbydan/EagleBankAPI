@@ -74,7 +74,7 @@ public class BankAccountService : IBankAccountService
         return account;
     }
 
-    public async Task<BankAccount> UpdateAccountAsync(string accountNumber, string name, string requestingUserId)
+    public async Task<BankAccount> UpdateAccountAsync(string accountNumber, string? name, string? accountType, string requestingUserId)
     {
         var account = await _unitOfWork.BankAccounts.GetByAccountNumberAsync(accountNumber);
         if (account == null)
@@ -88,7 +88,8 @@ public class BankAccountService : IBankAccountService
             throw new ForbiddenException("You can only update your own bank accounts");
         }
 
-        account.Name = name;
+        if (name != null) account.Name = name;
+        if (accountType != null) account.AccountType = accountType;
         account.UpdatedTimestamp = DateTime.UtcNow;
 
         _unitOfWork.BankAccounts.Update(account);
