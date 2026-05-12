@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using EagleBankAPI.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EagleBankAPI.DAL.Data;
 
@@ -35,7 +35,7 @@ public class EagleBankDbContext : DbContext
             entity.Property(e => e.SortCode).HasMaxLength(10);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
-            
+
             entity.HasOne(e => e.User)
                   .WithMany(u => u.BankAccounts)
                   .HasForeignKey(e => e.UserId)
@@ -49,7 +49,7 @@ public class EagleBankDbContext : DbContext
             entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
             entity.Property(e => e.Type).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Currency).HasMaxLength(3);
-            
+
             entity.HasOne(e => e.BankAccount)
                   .WithMany(a => a.Transactions)
                   .HasForeignKey(e => e.AccountNumber)

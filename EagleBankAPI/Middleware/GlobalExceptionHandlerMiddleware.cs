@@ -1,7 +1,7 @@
-using System.Net;
-using System.Text.Json;
 using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Models;
+using System.Net;
+using System.Text.Json;
 
 namespace EagleBankAPI.Middleware;
 

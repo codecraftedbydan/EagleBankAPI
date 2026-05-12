@@ -12,7 +12,7 @@ public class Transaction
     public string AccountNumber { get; set; } = string.Empty;
     public string UserId { get; set; } = string.Empty;
     public DateTime CreatedTimestamp { get; set; }
-    
+
     // Navigation property
     public BankAccount BankAccount { get; set; } = null!;
 }

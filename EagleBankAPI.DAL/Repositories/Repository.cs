@@ -1,8 +1,7 @@
+using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using EagleBankAPI.DAL.Data;
-
-using EagleBankAPI.Core.Repositories;
 namespace EagleBankAPI.DAL.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
@@ -68,8 +67,8 @@ public class Repository<T> : IRepository<T> where T : class
 
     public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
     {
-        return predicate == null 
-            ? await _dbSet.CountAsync() 
+        return predicate == null
+            ? await _dbSet.CountAsync()
             : await _dbSet.CountAsync(predicate);
     }
 }

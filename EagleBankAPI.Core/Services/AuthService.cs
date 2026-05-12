@@ -1,14 +1,14 @@
+using EagleBankAPI.Core.Entities;
 using EagleBankAPI.Core.Exceptions;
+using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.Core.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using EagleBankAPI.Core.Repositories;
-using EagleBankAPI.Core.Entities;
-using EagleBankAPI.Core.Services.Interfaces;
 
 namespace EagleBankAPI.Core.Services;
 
@@ -28,7 +28,7 @@ public class AuthService : IAuthService
     public async Task<(User user, string token, DateTime expiresAt)> LoginAsync(string email, string password)
     {
         _logger.LogInformation("Login attempt for email: {Email}", email);
-        
+
         var user = await _unitOfWork.Users.GetByEmailAsync(email);
         if (user == null)
         {

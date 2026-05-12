@@ -1,6 +1,6 @@
-using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Entities;
 using EagleBankAPI.Core.Entities.Enums;
+using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Repositories;
 using EagleBankAPI.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ public class BankAccountService : IBankAccountService
     public async Task<BankAccount> CreateAccountAsync(string name, string accountType, string userId)
     {
         _logger.LogInformation("Creating bank account for user: {UserId}, Name: {AccountName}, Type: {AccountType}", userId, name, accountType);
-        
+
         // Verify user exists
         var user = await _unitOfWork.Users.GetByIdAsync(userId);
         if (user == null)
@@ -113,7 +113,7 @@ public class BankAccountService : IBankAccountService
 
         _unitOfWork.BankAccounts.Remove(account);
         await _unitOfWork.CompleteAsync();
-        
+
         _logger.LogInformation("Bank account deleted: {AccountNumber} by user: {UserId}", accountNumber, requestingUserId);
     }
 }

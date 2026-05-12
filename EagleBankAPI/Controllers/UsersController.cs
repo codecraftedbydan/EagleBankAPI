@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using EagleBankAPI.Core.Entities;
+using EagleBankAPI.Core.Services.Interfaces;
 using EagleBankAPI.Models;
 using EagleBankAPI.Models.Requests;
 using EagleBankAPI.Models.Responses;
-using EagleBankAPI.Core.Services.Interfaces;
-using EagleBankAPI.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EagleBankAPI.Controllers;
 
@@ -22,8 +22,8 @@ public class UsersController : ControllerBase
 
     private string GetUserIdFromClaims()
     {
-        return User.FindFirst("userId")?.Value 
-            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+        return User.FindFirst("userId")?.Value
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? string.Empty;
     }
 
@@ -49,18 +49,18 @@ public class UsersController : ControllerBase
         }
 
         var user = await _userService.CreateUserAsync(
-            request.Name, 
-            request.Email, 
-            request.Password, 
+            request.Name,
+            request.Email,
+            request.Password,
             request.PhoneNumber,
-            request.Address.Line1, 
-            request.Address.Line2, 
-            request.Address.Line3, 
-            request.Address.Town, 
-            request.Address.County, 
+            request.Address.Line1,
+            request.Address.Line2,
+            request.Address.Line3,
+            request.Address.Town,
+            request.Address.County,
             request.Address.Postcode
         );
-        
+
         var response = MapToUserResponse(user);
         return CreatedAtAction(nameof(GetUserById), new { userId = response.Id }, response);
     }
@@ -99,19 +99,19 @@ public class UsersController : ControllerBase
     {
         var requestingUserId = GetUserIdFromClaims();
         var user = await _userService.UpdateUserAsync(
-            userId, 
-            request.Name ?? string.Empty, 
-            request.Email ?? string.Empty, 
+            userId,
+            request.Name ?? string.Empty,
+            request.Email ?? string.Empty,
             request.PhoneNumber ?? string.Empty,
-            request.Address?.Line1 ?? string.Empty, 
-            request.Address?.Line2, 
-            request.Address?.Line3, 
-            request.Address?.Town ?? string.Empty, 
-            request.Address?.County ?? string.Empty, 
+            request.Address?.Line1 ?? string.Empty,
+            request.Address?.Line2,
+            request.Address?.Line3,
+            request.Address?.Town ?? string.Empty,
+            request.Address?.County ?? string.Empty,
             request.Address?.Postcode ?? string.Empty,
             requestingUserId
         );
-        
+
         var response = MapToUserResponse(user);
         return Ok(response);
     }

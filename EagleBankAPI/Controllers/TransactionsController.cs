@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using EagleBankAPI.Core.Entities;
+using EagleBankAPI.Core.Services.Interfaces;
 using EagleBankAPI.Models;
 using EagleBankAPI.Models.Requests;
 using EagleBankAPI.Models.Responses;
-using EagleBankAPI.Core.Services.Interfaces;
-using EagleBankAPI.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EagleBankAPI.Controllers;
 
@@ -23,8 +23,8 @@ public class TransactionsController : ControllerBase
 
     private string GetUserIdFromClaims()
     {
-        return User.FindFirst("userId")?.Value 
-            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+        return User.FindFirst("userId")?.Value
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? string.Empty;
     }
 

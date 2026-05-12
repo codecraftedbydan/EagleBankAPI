@@ -1,15 +1,13 @@
-using EagleBankAPI.DAL.Data;
-using EagleBankAPI.DAL.Repositories;
 using EagleBankAPI.Core.Repositories;
-using EagleBankAPI.Middleware;
 using EagleBankAPI.Core.Services;
 using EagleBankAPI.Core.Services.Interfaces;
+using EagleBankAPI.DAL.Data;
+using EagleBankAPI.DAL.Repositories;
+using EagleBankAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,11 +128,11 @@ app.Use(async (context, next) =>
 {
     var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("HTTP {Method} {Path} started", context.Request.Method, context.Request.Path);
-    
+
     var sw = System.Diagnostics.Stopwatch.StartNew();
     await next.Invoke();
     sw.Stop();
-    
+
     logger.LogInformation("HTTP {Method} {Path} completed with {StatusCode} in {ElapsedMs}ms",
         context.Request.Method, context.Request.Path, context.Response.StatusCode, sw.ElapsedMilliseconds);
 });

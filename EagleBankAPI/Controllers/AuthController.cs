@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using EagleBankAPI.Core.Services.Interfaces;
 using EagleBankAPI.Models;
 using EagleBankAPI.Models.Requests;
 using EagleBankAPI.Models.Responses;
-using EagleBankAPI.Core.Services;
-using EagleBankAPI.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EagleBankAPI.Controllers;
 
@@ -27,14 +26,14 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var (user, token, expiresAt) = await _authService.LoginAsync(request.Email, request.Password);
-        
+
         var response = new AuthResponse
         {
             Token = token,
             UserId = user.Id,
             ExpiresAt = expiresAt
         };
-        
+
         return Ok(response);
     }
 }

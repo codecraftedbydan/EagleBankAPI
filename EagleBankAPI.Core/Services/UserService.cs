@@ -1,5 +1,5 @@
-using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Entities;
+using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Repositories;
 using EagleBankAPI.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -19,11 +19,11 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public async Task<User> CreateUserAsync(string name, string email, string password, string phoneNumber, 
+    public async Task<User> CreateUserAsync(string name, string email, string password, string phoneNumber,
         string addressLine1, string? addressLine2, string? addressLine3, string town, string county, string postcode)
     {
         _logger.LogInformation("Creating new user with email: {Email}", email);
-        
+
         // Check if email already exists
         if (await _unitOfWork.Users.EmailExistsAsync(email))
         {
@@ -58,7 +58,7 @@ public class UserService : IUserService
     public async Task<User?> GetUserByIdAsync(string userId, string requestingUserId)
     {
         _logger.LogInformation("User {RequestingUserId} requesting details for user {UserId}", requestingUserId, userId);
-        
+
         // Users can only view their own details
         if (userId != requestingUserId)
         {
@@ -86,7 +86,7 @@ public class UserService : IUserService
 
         // Update fields
         user.Name = name;
-        
+
         if (email != user.Email && await _unitOfWork.Users.EmailExistsAsync(email))
         {
             throw new DuplicateEmailException(email);
@@ -133,7 +133,7 @@ public class UserService : IUserService
 
         _unitOfWork.Users.Remove(user);
         await _unitOfWork.CompleteAsync();
-        
+
         _logger.LogInformation("User deleted successfully: {UserId}", userId);
     }
 }

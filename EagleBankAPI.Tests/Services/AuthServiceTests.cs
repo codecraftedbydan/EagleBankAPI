@@ -1,13 +1,11 @@
+using EagleBankAPI.Core.Entities;
 using EagleBankAPI.Core.Exceptions;
+using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.Core.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Xunit;
-using EagleBankAPI.Core.Entities;
-using EagleBankAPI.Core.Repositories;
-using EagleBankAPI.Core.Services;
-using EagleBankAPI.Core.Services.Interfaces;
 
 namespace EagleBankAPI.Tests.Services;
 

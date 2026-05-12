@@ -1,12 +1,11 @@
-using FluentAssertions;
-using Moq;
-using Xunit;
 using EagleBankAPI.Core.Entities;
+using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Repositories;
 using EagleBankAPI.Core.Services;
 using EagleBankAPI.Core.Services.Interfaces;
-using EagleBankAPI.Core.Exceptions;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace EagleBankAPI.Tests.Services;
 
@@ -154,7 +153,7 @@ public class UserServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _userService.UpdateUserAsync(userId, updatedName, user.Email, updatedPhoneNumber, 
+        var result = await _userService.UpdateUserAsync(userId, updatedName, user.Email, updatedPhoneNumber,
             user.AddressLine1, null, null, user.AddressTown, user.AddressCounty, user.AddressPostcode, userId);
 
         // Assert

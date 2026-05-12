@@ -1,7 +1,6 @@
-using Microsoft.EntityFrameworkCore.Storage;
-using EagleBankAPI.DAL.Data;
-
 using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.DAL.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 namespace EagleBankAPI.DAL.Repositories;
 
 public class UnitOfWork : IUnitOfWork

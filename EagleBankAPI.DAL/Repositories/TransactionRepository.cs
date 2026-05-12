@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using EagleBankAPI.DAL.Data;
 using EagleBankAPI.Core.Entities;
-
 using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.DAL.Data;
+using Microsoft.EntityFrameworkCore;
 namespace EagleBankAPI.DAL.Repositories;
 
 public class TransactionRepository : Repository<Transaction>, ITransactionRepository

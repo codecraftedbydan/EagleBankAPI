@@ -1,6 +1,6 @@
-using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Entities;
 using EagleBankAPI.Core.Entities.Enums;
+using EagleBankAPI.Core.Exceptions;
 using EagleBankAPI.Core.Repositories;
 using EagleBankAPI.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -20,9 +20,9 @@ public class TransactionService : ITransactionService
 
     public async Task<Transaction> CreateTransactionAsync(string accountNumber, decimal amount, string currency, string type, string? reference, string requestingUserId)
     {
-        _logger.LogInformation("Creating {TransactionType} transaction: Amount={Amount}, Currency={Currency}, Account={AccountNumber}, User={UserId}", 
+        _logger.LogInformation("Creating {TransactionType} transaction: Amount={Amount}, Currency={Currency}, Account={AccountNumber}, User={UserId}",
             type, amount, currency, accountNumber, requestingUserId);
-        
+
         var account = await _unitOfWork.BankAccounts.GetByAccountNumberAsync(accountNumber);
         if (account == null)
         {
@@ -91,7 +91,7 @@ public class TransactionService : ITransactionService
 
             _logger.LogInformation("Transaction completed successfully: {TransactionType} {Amount} {Currency}, Transaction ID: {TransactionId}, New Balance: {NewBalance}",
                 transactionType, amount, account.Currency, transaction.Id, account.Balance);
-            
+
             return transaction;
         }
         catch

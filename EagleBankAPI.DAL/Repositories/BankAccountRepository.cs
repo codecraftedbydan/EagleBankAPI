@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using EagleBankAPI.DAL.Data;
 using EagleBankAPI.Core.Entities;
-
 using EagleBankAPI.Core.Repositories;
+using EagleBankAPI.DAL.Data;
+using Microsoft.EntityFrameworkCore;
 namespace EagleBankAPI.DAL.Repositories;
 
 public class BankAccountRepository : Repository<BankAccount>, IBankAccountRepository
@@ -30,14 +29,14 @@ public class BankAccountRepository : Repository<BankAccount>, IBankAccountReposi
         // Generate account number: 01XXXXXX (8 digits total)
         var random = new Random();
         string accountNumber;
-        
+
         do
         {
             var randomPart = random.Next(100000, 999999); // 6 digits
             accountNumber = $"01{randomPart}";
         }
         while (await _dbSet.AnyAsync(a => a.AccountNumber == accountNumber));
-        
+
         return accountNumber;
     }
 }

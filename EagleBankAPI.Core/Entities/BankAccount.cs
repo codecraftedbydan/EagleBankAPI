@@ -13,7 +13,7 @@ public class BankAccount
     public string UserId { get; set; } = string.Empty;
     public DateTime CreatedTimestamp { get; set; }
     public DateTime UpdatedTimestamp { get; set; }
-    
+
     // Navigation properties
     public User User { get; set; } = null!;
     public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
